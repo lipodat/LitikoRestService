@@ -29,12 +29,6 @@ namespace LitikoRestService
 
         [OperationContract]
         [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json,
-         UriTemplate = "VerifySignByHash", ResponseFormat = WebMessageFormat.Json,
-            BodyStyle = WebMessageBodyStyle.Wrapped)]
-        Response VerifySignByHash(string DataHashBase64, string SignatureBase64);
-
-        [OperationContract]
-        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json,
          UriTemplate = "SignData", ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Wrapped)]
         Response SignData(string HashData, string PhoneNumber, int PositionId, string DisplayMessage = "Підписання даних в Директум");

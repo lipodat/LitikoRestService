@@ -1,4 +1,11 @@
 {
   "VodafoneURL": "https://localhost:5555/",
-  "CertPhoneFullName": "C:\\inetpub\\wwwroot\\LitikoRestService\\certPhone.config"
+  "CertPhoneFullName": "D:\\Igor\\VodafoneC#\\LitikoRestService\\certPhone.config",
+  "UseProxy": "true",
+  "ProxyScheme": "http",
+  "ProxyHost": "192.168.254.49",
+  "ProxyPort": "3128",
+  "VodafoneUri": "https://gateway.mobileid.vodafone.ua/msspserver",
+  "VodafoneAppId": "vr9EqQSzINPBwaY0",
+  "VodafoneAppPass": "7a4FO3wC4EBkkyEAXiv0"
 }

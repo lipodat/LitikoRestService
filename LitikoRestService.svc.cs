@@ -1,20 +1,13 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using RestSharp;
+﻿
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Reflection;
-using System.Runtime.Remoting.Messaging;
-using System.ServiceModel;
 using System.Text;
-using System.Web;
 using System.Web.Hosting;
 using IDev.Hub.MSSSender;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace LitikoRestService
 {
@@ -74,12 +67,17 @@ namespace LitikoRestService
         public Response GetAllPositions(string PhoneNumber)
         {
             MSSSender sender = GetSender();
+            var resp = sender.GetPosition(PhoneNumber);
+            var data = resp.Data;
+            var positions = JsonConvert.SerializeObject(data);
+            
+
             try
             {
-                var positions = sender.GetPosition(PhoneNumber);
-                return new Response() { ErrorMessage = string.Empty, ResponseResult = positions.ToString() };
+
+                return new Response() { ErrorMessage = string.Empty, ResponseResult = positions};
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return new Response() { ErrorMessage = e.Message + Environment.NewLine + "Trace : " + e.StackTrace, ResponseResult = string.Empty };
             }
@@ -105,70 +103,6 @@ namespace LitikoRestService
             catch (Exception e)
             {
                 return new Response() { ErrorMessage = e.Message + Environment.NewLine + "Trace : " + e.StackTrace, ResponseResult = string.Empty };
-            }
-            /*
-            //System.Diagnostics.Debugger.Launch();
-            string requestParams = JsonConvert.SerializeObject(new
-            {
-                dataToBeSignedBase64 = HashData,
-                displayMessage = DisplayMessage,
-                phoneNumber = PhoneNumber,
-                positionId = PositionId,
-                messagingMode = "synch",
-                service = "SIGN_DSTU_DEPUTY"
-            });
-            string requestName = "vodafoneservice/api/send-request";
-            try
-            {
-                Uri uri = new Uri(new Uri(settings.VodafoneURL), requestName);
-                RestClient client = new RestClient(uri.ToString());
-                RestRequest request = new RestRequest(Method.POST);
-                request.AddHeader("content-type", "application/json");
-                request.AddParameter("application/json", requestParams, ParameterType.RequestBody);
-                IRestResponse response = client.Execute(request);
-                if (response.StatusCode == HttpStatusCode.OK)
-                {
-                    return new Response() { ErrorMessage = string.Empty, ResponseResult = response.Content };
-                }
-                else
-                {
-                    return new Response() { ErrorMessage = response.Content, ResponseResult = string.Empty };
-                }
-            }
-            catch (WebException e)
-            {
-                return new Response() { ErrorMessage = e.Message, ResponseResult = string.Empty };
-            }*/
-        }
-
-        public Response VerifySignByHash(string DataHashBase64, string SignatureBase64)
-        {
-            string requestParams = JsonConvert.SerializeObject(new
-            {
-                dataHashBase64 = DataHashBase64,
-                signatureBase64 = SignatureBase64
-            });
-            string requestName = "vodafoneservice/api/get-authentic-verify-by-hash";
-            try
-            {
-                Uri uri = new Uri(new Uri(settings.VodafoneURL), requestName);
-                RestClient client = new RestClient(uri.ToString());
-                RestRequest request = new RestRequest(Method.POST);
-                request.AddHeader("content-type", "application/json");
-                request.AddParameter("application/json", requestParams, ParameterType.RequestBody);
-                IRestResponse response = client.Execute(request);
-                if (response.StatusCode == HttpStatusCode.OK)
-                {
-                    return new Response() { ErrorMessage = string.Empty, ResponseResult = response.Content };
-                }
-                else
-                {
-                    return new Response() { ErrorMessage = response.Content, ResponseResult = string.Empty };
-                }
-            }
-            catch (WebException e)
-            {
-                return new Response() { ErrorMessage = e.Message, ResponseResult = string.Empty };
             }
         }
 

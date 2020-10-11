@@ -1,6 +1,0 @@
- <div id="content">
-      <p class="heading1">╨Ю╤И╨╕╨▒╨║╨░ ╨╖╨░╨┐╤А╨╛╤Б╨░</p>
-      <p>╨б╨╡╤А╨▓╨╡╤А ╨╛╨▒╨╜╨░╤А╤Г╨╢╨╕╨╗ ╨╛╤И╨╕╨▒╨║╤Г ╨┐╤А╨╕ ╨╛╨▒╤А╨░╨▒╨╛╤В╨║╨╡ ╨╖╨░╨┐╤А╨╛╤Б╨░. ╨б╨╛╨╛╨▒╤Й╨╡╨╜╨╕╨╡ ╨╛╨▒ ╨╕╤Б╨║╨╗╤О╤З╨╡╨╜╨╕╨╕: "╨д╨╛╤А╨╝╨░╤В╤В╨╡╤А ╤Б╨│╨╡╨╜╨╡╤А╨╕╤А╨╛╨▓╨░╨╗ ╨╕╤Б╨║╨╗╤О╤З╨╡╨╜╨╕╨╡ ╨┐╤А╨╕ ╨┐╨╛╨┐╤Л╤В╨║╨╡ ╨┤╨╡╤Б╨╡╤А╨╕╨░╨╗╨╕╨╖╨╛╨▓╨░╤В╤М ╤Б╨╛╨╛╨▒╤Й╨╡╨╜╨╕╨╡: ╨Ю╤И╨╕╨▒╨║╨░ ╨┤╨╡╤Б╨╡╤А╨╕╨░╨╗╨╕╨╖╨░╤Ж╨╕╨╕ ╤В╨╡╨╗╨░ ╤Б╨╛╨╛╨▒╤Й╨╡╨╜╨╕╤П ╨╖╨░╨┐╤А╨╛╤Б╨░ ╨┤╨╗╤П ╨╛╨┐╨╡╤А╨░╤Ж╨╕╨╕ "GetPhoneByCertThumbprint". ╨Ю╨▒╨╜╨░╤А╤Г╨╢╨╡╨╜ ╨╜╨╡╨┐╤А╨╡╨┤╨▓╨╕╨┤╨╡╨╜╨╜╤Л╨╣ ╤Б╨╕╨╝╨▓╨╛╨╗ "'".". ╨Ф╨╛╨┐╨╛╨╗╨╜╨╕╤В╨╡╨╗╤М╨╜╤Л╨╡ ╤Б╨▓╨╡╨┤╨╡╨╜╨╕╤П ╤Б╨╝. ╨▓ ╨╢╤Г╤А╨╜╨░╨╗╨░╤Е ╤Б╨╡╤А╨▓╨╡╤А╨░. ╨в╤А╨░╤Б╤Б╨╕╤А╨╛╨▓╨║╨░ ╤Б╤В╨╡╨║╨░ ╨╕╤Б╨║╨╗╤О╤З╨╡╨╜╨╕╨╣: </p>
-      <p>   ╨▓ System.ServiceModel.Dispatcher.OperationFormatter.DeserializeRequest(Message message, Object[] parameters)
-   ╨▓ System.ServiceModel.Dispatcher.DemultiplexingDispatchMessageFormatter.DeserializeRequest(Message message, Object[] parameters)
-   ╨▓ System.ServiceModel.Dispatcher.UriTemp
