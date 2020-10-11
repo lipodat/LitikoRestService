@@ -1,0 +1,1 @@
+﻿<%@ ServiceHost Language="C#" Debug="true" Service="LitikoRestService.LitikoRestService" CodeBehind="LitikoRestService.svc.cs" %>

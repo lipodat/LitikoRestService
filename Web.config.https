@@ -1,0 +1,54 @@
+<?xml version="1.0"?>  
+<configuration>  
+  
+  <system.web>
+    <compilation debug="true" targetFramework="4.5"/>
+    <pages controlRenderingCompatibilityVersion="4.0"/>
+  </system.web>
+  
+  <system.serviceModel>
+  <serviceHostingEnvironment multipleSiteBindingsEnabled="true" />
+  <bindings>
+    <webHttpBinding>
+      <binding name="Binding" crossDomainScriptAccessEnabled="true">
+        <security mode="Transport">
+          <transport clientCredentialType="None" />
+        </security>
+      </binding>
+      <binding name="httpbind" crossDomainScriptAccessEnabled="true">
+      </binding>
+    </webHttpBinding>
+  </bindings>
+  <client />
+  <services>
+    <service name="LitikoRestService.LitikoRestService"  behaviorConfiguration="ServiceBehaviour">
+      <endpoint address="" binding="webHttpBinding" bindingConfiguration="Binding" contract="LitikoRestService.ILitikoRestService" behaviorConfiguration="web">
+      </endpoint>
+      <endpoint address="" binding="webHttpBinding" bindingConfiguration="httpbind" contract="LitikoRestService.ILitikoRestService" behaviorConfiguration="web">
+      </endpoint>
+    </service>
+  </services>
+  <behaviors>
+    <serviceBehaviors>
+      <behavior name="ServiceBehaviour">
+        <serviceMetadata httpGetEnabled="true" httpsGetEnabled="true" />
+        <serviceDebug includeExceptionDetailInFaults="true" />
+      </behavior>
+      <behavior name="web">
+        <serviceMetadata httpGetEnabled="true" httpsGetEnabled="true" />
+        <serviceDebug includeExceptionDetailInFaults="true" />
+      </behavior>
+    </serviceBehaviors>
+    <endpointBehaviors>
+      <behavior name="web">
+        <webHttp helpEnabled="true" />
+      </behavior>
+    </endpointBehaviors>
+  </behaviors>
+</system.serviceModel>
+
+  <system.webServer>  
+    <modules runAllManagedModulesForAllRequests="true"/>  
+  </system.webServer>  
+  
+</configuration>  
