@@ -1,5 +1,4 @@
 {
-  "VodafoneURL": "https://localhost:5555/",
   "CertPhoneFullName": "D:\\Igor\\VodafoneC#\\LitikoRestService\\certPhone.config",
   "UseProxy": "true",
   "ProxyScheme": "http",

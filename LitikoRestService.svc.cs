@@ -14,7 +14,6 @@ namespace LitikoRestService
     public class Settings
     {
         private static string JSONSettings = Path.Combine(Path.GetDirectoryName(HostingEnvironment.ApplicationPhysicalPath), @"Settings.json");
-        public string VodafoneURL = JObject.Parse(File.ReadAllText(JSONSettings))["VodafoneURL"].ToString();
         public string CertPhoneFullName = JObject.Parse(File.ReadAllText(JSONSettings))["CertPhoneFullName"].ToString();
         public string UseProxy = JObject.Parse(File.ReadAllText(JSONSettings))["UseProxy"].ToString();
         public string ProxyScheme = JObject.Parse(File.ReadAllText(JSONSettings))["ProxyScheme"].ToString();
@@ -83,15 +82,15 @@ namespace LitikoRestService
             }
         }
 
-        public Response SignData(string HashData, string PhoneNumber, int PositionId, string DisplayMessage = "Підписання даних в Директум")
+        public Response SignData(string HashData, string PhoneNumber, int PositionId, string Service, string DisplayMessage = "Підписання даних в Директум")
         {
             MSSSender sender = GetSender();
             var signatureParameters = new SignatureParameters
             {
                 DisplayData = DisplayMessage,
                 Position = PositionId,
-                Data = Encoding.ASCII.GetBytes(HashData),
-                Service = "SIGN_DSTU_DEPUTY",
+                Data = HashData,
+                Service = Service,
                 RandomValue = Guid.NewGuid().ToString("N").Substring(0, 4)
             };
 

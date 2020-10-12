@@ -31,7 +31,7 @@ namespace LitikoRestService
         [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json,
          UriTemplate = "SignData", ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Wrapped)]
-        Response SignData(string HashData, string PhoneNumber, int PositionId, string DisplayMessage = "Підписання даних в Директум");
+        Response SignData(string HashData, string PhoneNumber, int PositionId, string Service, string DisplayMessage = "Підписання даних в Директум");
 
         [OperationContract]
         [WebInvoke(Method = "GET", RequestFormat = WebMessageFormat.Json,
