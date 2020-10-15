@@ -65,14 +65,12 @@ namespace LitikoRestService
         }
         public Response GetAllPositions(string PhoneNumber)
         {
-            MSSSender sender = GetSender();
-            var resp = sender.GetPosition(PhoneNumber);
-            var data = resp.Data;
-            var positions = JsonConvert.SerializeObject(data);
-            
-
             try
             {
+                MSSSender sender = GetSender();
+                var resp = sender.GetPosition(PhoneNumber);
+                var data = resp.Data;
+                var positions = JsonConvert.SerializeObject(data);
 
                 return new Response() { ErrorMessage = string.Empty, ResponseResult = positions};
             }
@@ -84,18 +82,18 @@ namespace LitikoRestService
 
         public Response SignData(string HashData, string PhoneNumber, int PositionId, string Service, string DisplayMessage = "Підписання даних в Директум")
         {
-            MSSSender sender = GetSender();
-            var signatureParameters = new SignatureParameters
-            {
-                DisplayData = DisplayMessage,
-                Position = PositionId,
-                Data = HashData,
-                Service = Service,
-                RandomValue = Guid.NewGuid().ToString("N").Substring(0, 4)
-            };
-
             try
             {
+                MSSSender sender = GetSender();
+                var signatureParameters = new SignatureParameters
+                {
+                    DisplayData = DisplayMessage,
+                    Position = PositionId,
+                    Data = HashData,
+                    Service = Service,
+                    RandomValue = Guid.NewGuid().ToString("N").Substring(0, 4)
+                };
+            
                 var res = sender.DoAction(PhoneNumber, signatureParameters);
                 return new Response() { ErrorMessage = string.Empty, ResponseResult = Convert.ToBase64String(res.Data) };
             }
