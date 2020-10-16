@@ -18,6 +18,9 @@ namespace LitikoRestService
         public string UseProxy = JObject.Parse(File.ReadAllText(JSONSettings))["UseProxy"].ToString();
         public string ProxyScheme = JObject.Parse(File.ReadAllText(JSONSettings))["ProxyScheme"].ToString();
         public string ProxyHost = JObject.Parse(File.ReadAllText(JSONSettings))["ProxyHost"].ToString();
+        public string ProxyUserDomain = JObject.Parse(File.ReadAllText(JSONSettings))["ProxyUserDomain"].ToString();
+        public string ProxyUserName = JObject.Parse(File.ReadAllText(JSONSettings))["ProxyUserName"].ToString();
+        public string ProxyUserPassword = JObject.Parse(File.ReadAllText(JSONSettings))["ProxyUserPassword"].ToString();
         public int ProxyPort = int.Parse(JObject.Parse(File.ReadAllText(JSONSettings))["ProxyPort"].ToString());
         public string VodafoneUri = JObject.Parse(File.ReadAllText(JSONSettings))["VodafoneUri"].ToString();
         public string VodafoneAppId = JObject.Parse(File.ReadAllText(JSONSettings))["VodafoneAppId"].ToString();
@@ -33,7 +36,16 @@ namespace LitikoRestService
             if (bool.Parse(settings.UseProxy))
             {
                 var uriBuilder = new UriBuilder(settings.ProxyScheme, settings.ProxyHost, settings.ProxyPort);
-                return new MSSSender(settings.VodafoneUri, settings.VodafoneAppId, settings.VodafoneAppPass, uriBuilder.Uri);
+                if(string.IsNullOrWhiteSpace(settings.ProxyUserName))
+                    return new MSSSender(settings.VodafoneUri, settings.VodafoneAppId, settings.VodafoneAppPass, uriBuilder.Uri);
+                else
+                    return new MSSSender(mssUrl: settings.VodafoneUri, 
+                                         appId: settings.VodafoneAppId, 
+                                         appPassword: settings.VodafoneAppPass, 
+                                         proxyUri: uriBuilder.Uri, 
+                                         userDomain: settings.ProxyUserDomain, 
+                                         userName: settings.ProxyUserName, 
+                                         password: settings.ProxyUserPassword);
             }
             else
                 return new MSSSender(settings.VodafoneUri, settings.VodafoneAppId, settings.VodafoneAppPass);
