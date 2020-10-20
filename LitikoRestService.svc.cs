@@ -25,34 +25,45 @@ namespace LitikoRestService
         public string VodafoneUri = JObject.Parse(File.ReadAllText(JSONSettings))["VodafoneUri"].ToString();
         public string VodafoneAppId = JObject.Parse(File.ReadAllText(JSONSettings))["VodafoneAppId"].ToString();
         public string VodafoneAppPass = JObject.Parse(File.ReadAllText(JSONSettings))["VodafoneAppPass"].ToString();
+        public MSSSender sender;
+
+        public Settings()
+        {
+            sender = GetSender();
+        }
+        
+        private MSSSender GetSender()
+        {
+            if (bool.Parse(UseProxy))
+            {
+                var uriBuilder = new UriBuilder(ProxyScheme, ProxyHost, ProxyPort);
+                if (string.IsNullOrWhiteSpace(ProxyUserName))
+                    return new MSSSender(VodafoneUri, VodafoneAppId, VodafoneAppPass, uriBuilder.Uri);
+                else
+                    return new MSSSender(mssUrl: VodafoneUri,
+                                         appId: VodafoneAppId,
+                                         appPassword: VodafoneAppPass,
+                                         proxyUri: uriBuilder.Uri,
+                                         userDomain: ProxyUserDomain,
+                                         userName: ProxyUserName,
+                                         password: ProxyUserPassword);
+            }
+            else
+                return new MSSSender(VodafoneUri, VodafoneAppId, VodafoneAppPass);
+        }
 
     }
     public class LitikoRestService : ILitikoRestService
     {
-        Settings settings = new Settings();
+        Settings settings = null;
 
-        private MSSSender GetSender()
-        {
-            if (bool.Parse(settings.UseProxy))
-            {
-                var uriBuilder = new UriBuilder(settings.ProxyScheme, settings.ProxyHost, settings.ProxyPort);
-                if(string.IsNullOrWhiteSpace(settings.ProxyUserName))
-                    return new MSSSender(settings.VodafoneUri, settings.VodafoneAppId, settings.VodafoneAppPass, uriBuilder.Uri);
-                else
-                    return new MSSSender(mssUrl: settings.VodafoneUri, 
-                                         appId: settings.VodafoneAppId, 
-                                         appPassword: settings.VodafoneAppPass, 
-                                         proxyUri: uriBuilder.Uri, 
-                                         userDomain: settings.ProxyUserDomain, 
-                                         userName: settings.ProxyUserName, 
-                                         password: settings.ProxyUserPassword);
-            }
-            else
-                return new MSSSender(settings.VodafoneUri, settings.VodafoneAppId, settings.VodafoneAppPass);
-        }
+        
 
         public Response GetPhoneByCertThumbprint(string CertificateThumbprint)
         {
+            if (settings == null)
+                settings = new Settings();
+
             string configPath = settings.CertPhoneFullName;
             //Если в настройках сервиса тоже нет пути к файлу - даем ошибку
             if (string.IsNullOrEmpty(configPath))
@@ -79,8 +90,9 @@ namespace LitikoRestService
         {
             try
             {
-                MSSSender sender = GetSender();
-                var resp = sender.GetPosition(PhoneNumber);
+                if (settings == null)
+                    settings = new Settings();
+                var resp = settings.sender.GetPosition(PhoneNumber);
                 var data = resp.Data;
                 var positions = JsonConvert.SerializeObject(data);
 
@@ -96,7 +108,8 @@ namespace LitikoRestService
         {
             try
             {
-                MSSSender sender = GetSender();
+                if (settings == null)
+                    settings = new Settings();
                 var signatureParameters = new SignatureParameters
                 {
                     DisplayData = DisplayMessage,
@@ -106,7 +119,7 @@ namespace LitikoRestService
                     RandomValue = Guid.NewGuid().ToString("N").Substring(0, 4)
                 };
             
-                var res = sender.DoAction(PhoneNumber, signatureParameters);
+                var res = settings.sender.DoAction(PhoneNumber, signatureParameters);
                 return new Response() { ErrorMessage = string.Empty, ResponseResult = Convert.ToBase64String(res.Data) };
             }
             catch (Exception e)
