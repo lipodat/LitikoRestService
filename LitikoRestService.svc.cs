@@ -8,9 +8,11 @@ using System.Web.Hosting;
 using IDev.Hub.MSSSender;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using KyivstarMobileID;
 
 namespace LitikoRestService
 {
+    
     public class Settings
     {
         private static string JSONSettings = Path.Combine(Path.GetDirectoryName(HostingEnvironment.ApplicationPhysicalPath), @"Settings.json");
@@ -25,14 +27,39 @@ namespace LitikoRestService
         public string VodafoneUri = JObject.Parse(File.ReadAllText(JSONSettings))["VodafoneUri"].ToString();
         public string VodafoneAppId = JObject.Parse(File.ReadAllText(JSONSettings))["VodafoneAppId"].ToString();
         public string VodafoneAppPass = JObject.Parse(File.ReadAllText(JSONSettings))["VodafoneAppPass"].ToString();
-        public MSSSender sender;
+        public string KyivstarUri = JObject.Parse(File.ReadAllText(JSONSettings))["KyivstarUri"].ToString();
+        public string KyivstarAppId = JObject.Parse(File.ReadAllText(JSONSettings))["KyivstarAppId"].ToString();
+        public string KyivstarAppPass = JObject.Parse(File.ReadAllText(JSONSettings))["KyivstarAppPass"].ToString();
+        public MSSSender vodafoneSender;
+        public KyivstarClient kyivstarClient;
+        internal List<string> VodafoneCodes = new List<string> {"50", "66", "95", "99"};
+        internal List<string> KyivstarCodes = new List<string> { "67", "68", "96", "97", "98"};
 
         public Settings()
         {
-            sender = GetSender();
+            vodafoneSender = GetVodafoneSender();
+            kyivstarClient = GetKyivstarClient();
         }
         
-        private MSSSender GetSender()
+        private KyivstarClient GetKyivstarClient()
+        {
+            if (bool.Parse(UseProxy))
+            {
+                var uriBuilder = new UriBuilder(ProxyScheme, ProxyHost, ProxyPort);
+                if (string.IsNullOrWhiteSpace(ProxyUserName))
+                    return new KyivstarClient(uriBuilder.Uri, KyivstarAppId, KyivstarAppPass);
+                else
+                    return new KyivstarClient(uriBuilder.Uri,
+                                              ProxyUserDomain,
+                                              ProxyUserName,
+                                              ProxyUserPassword,
+                                              KyivstarAppId,
+                                              KyivstarAppPass);
+            }
+            else
+                return new KyivstarClient(KyivstarAppId, KyivstarAppPass);
+        }
+        private MSSSender GetVodafoneSender()
         {
             if (bool.Parse(UseProxy))
             {
@@ -57,7 +84,24 @@ namespace LitikoRestService
     {
         Settings settings = null;
 
-        
+        public bool GetOperatorByPhone(string PhoneNumber, out string Operator)
+        {
+            Operator = string.Empty;
+            //Check phone length
+            if (PhoneNumber.Length != 12)
+                return false;
+            if (settings.VodafoneCodes.Contains(PhoneNumber.Substring(3, 2)))
+            {
+                Operator = "Vodafone";
+                return true;
+            }
+            if (settings.KyivstarCodes.Contains(PhoneNumber.Substring(3, 2)))
+            {
+                Operator = "Kyivstar";
+                return true;
+            }
+            return false;
+        }
 
         public Response GetPhoneByCertThumbprint(string CertificateThumbprint)
         {
@@ -92,7 +136,7 @@ namespace LitikoRestService
             {
                 if (settings == null)
                     settings = new Settings();
-                var resp = settings.sender.GetPosition(PhoneNumber);
+                var resp = settings.vodafoneSender.GetPosition(PhoneNumber);
                 var data = resp.Data;
                 var positions = JsonConvert.SerializeObject(data);
 
@@ -104,7 +148,27 @@ namespace LitikoRestService
             }
         }
 
-        public Response SignData(string HashData, string PhoneNumber, int PositionId, string Service, string DisplayMessage = "Підписання даних в Директум")
+        public Response SignData(string HashData, string PhoneNumber, int PositionId = 0, string Service = "", string DisplayMessage = "Підписання даних в Директум")
+        {
+            if(GetOperatorByPhone(PhoneNumber, out string Operator))
+            {
+                if(Operator == "Vodafone")
+                {
+                    return SignVodafone(HashData, PhoneNumber, PositionId, Service, DisplayMessage);
+                }
+                if (Operator == "Kyivstar")
+                    return SignKyivstar(HashData, PhoneNumber);
+
+                return new Response() { ErrorMessage = "Метод GetOperatorByPhone вернул неопознанного оператора", ResponseResult = string.Empty };
+            }
+            else
+            {
+                return new Response() { ErrorMessage = Operator, ResponseResult = string.Empty };
+            }
+        }
+
+
+        public Response SignVodafone(string HashData, string PhoneNumber, int PositionId, string Service, string DisplayMessage = "Підписання даних в Директум")
         {
             try
             {
@@ -119,8 +183,24 @@ namespace LitikoRestService
                     RandomValue = Guid.NewGuid().ToString("N").Substring(0, 4)
                 };
             
-                var res = settings.sender.DoAction(PhoneNumber, signatureParameters);
+                var res = settings.vodafoneSender.DoAction(PhoneNumber, signatureParameters);
                 return new Response() { ErrorMessage = string.Empty, ResponseResult = Convert.ToBase64String(res.Data) };
+            }
+            catch (Exception e)
+            {
+                return new Response() { ErrorMessage = e.Message + Environment.NewLine + "Trace : " + e.StackTrace, ResponseResult = string.Empty };
+            }
+        }
+        public Response SignKyivstar(string HashData, string PhoneNumber)
+        {
+            try
+            {
+                if (settings == null)
+                    settings = new Settings();
+                if (settings.kyivstarClient.SendRequest(settings.KyivstarUri, PhoneNumber, HashData, out string res))
+                    return new Response() { ErrorMessage = string.Empty, ResponseResult = res };
+                else
+                    return new Response() { ErrorMessage = "Запрос подписи вернул ошибку : " + res, ResponseResult = string.Empty };
             }
             catch (Exception e)
             {

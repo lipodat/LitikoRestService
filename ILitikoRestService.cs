@@ -29,9 +29,22 @@ namespace LitikoRestService
 
         [OperationContract]
         [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json,
+         UriTemplate = "SignVodafone", ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Wrapped)]
+        Response SignVodafone(string HashData, string PhoneNumber, int PositionId, string Service, string DisplayMessage = "Підписання даних в Директум");
+
+        [OperationContract]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json,
          UriTemplate = "SignData", ResponseFormat = WebMessageFormat.Json,
             BodyStyle = WebMessageBodyStyle.Wrapped)]
-        Response SignData(string HashData, string PhoneNumber, int PositionId, string Service, string DisplayMessage = "Підписання даних в Директум");
+        Response SignData(string HashData, string PhoneNumber, int PositionId = 0, string Service = "", string DisplayMessage = "Підписання даних в Директум");
+
+        [OperationContract]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json,
+         UriTemplate = "SignKyivstar", ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Wrapped)]
+        Response SignKyivstar(string HashData, string PhoneNumber);
+
 
         [OperationContract]
         [WebInvoke(Method = "GET", RequestFormat = WebMessageFormat.Json,

@@ -6,8 +6,11 @@
   "ProxyPort": "3128",
   "ProxyUserDomain": "",
   "ProxyUserName": "",
-  "ProxyUserPassword":  "",
+  "ProxyUserPassword": "",
   "VodafoneUri": "https://gateway.mobileid.vodafone.ua/msspserver",
   "VodafoneAppId": "vr9EqQSzINPBwaY0",
-  "VodafoneAppPass": "7a4FO3wC4EBkkyEAXiv0"
+  "VodafoneAppPass": "7a4FO3wC4EBkkyEAXiv0",
+  "KyivstarUri": "https://vss-ws.kyivstar.ua:8443/MSSP/services/MSS_Signature",
+  "KyivstarAppId": "http://litiko/",
+  "KyivstarAppPass": "ZsgAp3D536"
 }
