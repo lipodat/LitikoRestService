@@ -32,13 +32,15 @@ namespace LitikoRestService
         public string KyivstarAppPass = JObject.Parse(File.ReadAllText(JSONSettings))["KyivstarAppPass"].ToString();
         public MSSSender vodafoneSender;
         public KyivstarClient kyivstarClient;
-        internal List<string> VodafoneCodes = new List<string> {"50", "66", "95", "99"};
-        internal List<string> KyivstarCodes = new List<string> { "67", "68", "96", "97", "98"};
+        internal List<string> VodafoneCodes;
+        internal List<string> KyivstarCodes;
 
         public Settings()
         {
             vodafoneSender = GetVodafoneSender();
             kyivstarClient = GetKyivstarClient();
+            VodafoneCodes = new List<string> {"50", "66", "95", "99"};
+            KyivstarCodes = new List<string> {"67", "68", "96", "97", "98"};
         }
         
         private KyivstarClient GetKyivstarClient()
@@ -84,23 +86,18 @@ namespace LitikoRestService
     {
         Settings settings = null;
 
-        public bool GetOperatorByPhone(string PhoneNumber, out string Operator)
+        public Response GetOperatorByPhone(string PhoneNumber)
         {
-            Operator = string.Empty;
+            if (settings == null)
+                settings = new Settings();
             //Check phone length
             if (PhoneNumber.Length != 12)
-                return false;
+                return new Response() { ErrorMessage = "Длина номера телефона должна быть равна 12 символам ! (PhoneNumber = " + PhoneNumber + ")", ResponseResult = string.Empty };
             if (settings.VodafoneCodes.Contains(PhoneNumber.Substring(3, 2)))
-            {
-                Operator = "Vodafone";
-                return true;
-            }
+                return new Response() { ErrorMessage = string.Empty, ResponseResult = "Vodafone" };
             if (settings.KyivstarCodes.Contains(PhoneNumber.Substring(3, 2)))
-            {
-                Operator = "Kyivstar";
-                return true;
-            }
-            return false;
+                return new Response() { ErrorMessage = string.Empty, ResponseResult = "Kyivstar" };
+            return new Response() { ErrorMessage = "Не смог определить оператора по номеру телефона (PhoneNumber = " + PhoneNumber + ")", ResponseResult = string.Empty };
         }
 
         public Response GetPhoneByCertThumbprint(string CertificateThumbprint)
@@ -150,20 +147,21 @@ namespace LitikoRestService
 
         public Response SignData(string HashData, string PhoneNumber, int PositionId = 0, string Service = "", string DisplayMessage = "Підписання даних в Директум")
         {
-            if(GetOperatorByPhone(PhoneNumber, out string Operator))
+            var getOperatorResult = GetOperatorByPhone(PhoneNumber);
+            if (!string.IsNullOrWhiteSpace(getOperatorResult.ErrorMessage))
             {
-                if(Operator == "Vodafone")
+                if(getOperatorResult.ResponseResult == "Vodafone")
                 {
                     return SignVodafone(HashData, PhoneNumber, PositionId, Service, DisplayMessage);
                 }
-                if (Operator == "Kyivstar")
+                if (getOperatorResult.ResponseResult == "Kyivstar")
                     return SignKyivstar(HashData, PhoneNumber);
 
                 return new Response() { ErrorMessage = "Метод GetOperatorByPhone вернул неопознанного оператора", ResponseResult = string.Empty };
             }
             else
             {
-                return new Response() { ErrorMessage = Operator, ResponseResult = string.Empty };
+                return new Response() { ErrorMessage = getOperatorResult.ErrorMessage, ResponseResult = string.Empty };
             }
         }
 
@@ -210,7 +208,9 @@ namespace LitikoRestService
 
         public string Test1()
         {
-            return settings.CertPhoneFullName;
+            if (settings == null)
+                settings = new Settings();
+            return string.Join(",",settings.VodafoneCodes);
         }
 
         public string Secret()

@@ -1,5 +1,5 @@
 {
-  "CertPhoneFullName": "D:\\Igor\\VodafoneC#\\LitikoRestService\\certPhone.config",
+  "CertPhoneFullName": "C:\\inetpub\\wwwroot\\LitikoRestService\\certPhone.config",
   "UseProxy": "true",
   "ProxyScheme": "http",
   "ProxyHost": "192.168.254.49",

@@ -14,7 +14,13 @@ namespace LitikoRestService
     [ServiceContract]
     public interface ILitikoRestService
     {
-       
+
+        [OperationContract]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json,
+         UriTemplate = "GetOperatorByPhone", ResponseFormat = WebMessageFormat.Json,
+            BodyStyle = WebMessageBodyStyle.Wrapped)]
+        Response GetOperatorByPhone(string PhoneNumber);
+
         [OperationContract]
         [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json,
          UriTemplate = "GetPhoneByCertThumbprint", ResponseFormat = WebMessageFormat.Json,
