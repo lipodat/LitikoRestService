@@ -148,7 +148,7 @@ namespace LitikoRestService
         public Response SignData(string HashData, string PhoneNumber, int PositionId = 0, string Service = "", string DisplayMessage = "Підписання даних в Директум")
         {
             var getOperatorResult = GetOperatorByPhone(PhoneNumber);
-            if (!string.IsNullOrWhiteSpace(getOperatorResult.ErrorMessage))
+            if (string.IsNullOrWhiteSpace(getOperatorResult.ErrorMessage))
             {
                 if(getOperatorResult.ResponseResult == "Vodafone")
                 {
