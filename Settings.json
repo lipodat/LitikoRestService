@@ -1,6 +1,6 @@
 {
   "CertPhoneFullName": "C:\\inetpub\\wwwroot\\LitikoRestService\\certPhone.config",
-  "UseProxy": "true",
+  "UseProxy": "false",
   "ProxyScheme": "http",
   "ProxyHost": "192.168.254.49",
   "ProxyPort": "3128",

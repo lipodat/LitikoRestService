@@ -195,6 +195,10 @@ namespace LitikoRestService
             {
                 if (settings == null)
                     settings = new Settings();
+
+                if (!PhoneNumber.StartsWith("+"))
+                    PhoneNumber = "+" + PhoneNumber;
+
                 if (settings.kyivstarClient.SendRequest(settings.KyivstarUri, PhoneNumber, HashData, out string res))
                     return new Response() { ErrorMessage = string.Empty, ResponseResult = res };
                 else
